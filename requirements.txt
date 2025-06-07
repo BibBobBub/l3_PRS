@@ -1,0 +1,4 @@
+flask
+requests
+hazelcast-python-client
+hazelcast

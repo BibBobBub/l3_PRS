@@ -1,0 +1,41 @@
+version: '3.9'
+
+services:
+  facade:
+    build: ./facade_service
+    ports:
+      - "5000:5000"
+    depends_on:
+      - logging1
+      - logging2
+      - logging3
+      - messages
+
+  logging1:
+    build: ./logging_service
+    environment:
+      - INSTANCE_NAME=logging1
+      - PORT=5001
+    ports:
+      - "5001:5001"
+
+  logging2:
+    build: ./logging_service
+    environment:
+      - INSTANCE_NAME=logging2
+      - PORT=5002
+    ports:
+      - "5002:5002"
+
+  logging3:
+    build: ./logging_service
+    environment:
+      - INSTANCE_NAME=logging3
+      - PORT=5003
+    ports:
+      - "5003:5003"
+
+  messages:
+    build: ./messages_service
+    ports:
+      - "5004:5004"
