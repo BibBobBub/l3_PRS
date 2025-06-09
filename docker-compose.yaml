@@ -1,41 +1,118 @@
-version: '3.9'
+
+version: '3.8'
 
 services:
-  facade:
+  hazelcast-node1:
+    build: ./hazelcast
+    image: hazelcast/hazelcast:5.3
+    hostname: hz1
+    ports:
+      - "5701:5701"
+    environment:
+      - HZ_CLUSTERNAME=dev
+      - HZ_NETWORK_RESTAPI_ENABLED=true
+      - HZ_NETWORK_RESTAPI_ENDPOINTGROUPS_DATA_ENABLED=true
+    networks:
+      - hazelnet
+
+  hazelcast-node2:
+    build: ./hazelcast
+    image: hazelcast/hazelcast:5.3
+    hostname: hz2
+    environment:
+      - HZ_CLUSTERNAME=dev
+      - HZ_NETWORK_RESTAPI_ENABLED=true
+      - HZ_NETWORK_RESTAPI_ENDPOINTGROUPS_DATA_ENABLED=true
+    networks:
+      - hazelnet
+
+  hazelcast-node3:
+    build: ./hazelcast
+    image: hazelcast/hazelcast:5.3
+    hostname: hz3
+    environment:
+      - HZ_CLUSTERNAME=dev
+      - HZ_NETWORK_RESTAPI_ENABLED=true
+      - HZ_NETWORK_RESTAPI_ENDPOINTGROUPS_DATA_ENABLED=true
+    networks:
+      - hazelnet
+
+  management-center:
+    image: hazelcast/management-center:5.3
+    ports:
+      - "8080:8080"
+    environment:
+      - MC_DEFAULT_CLUSTER=dev
+      - MC_DEFAULT_CLUSTER_MEMBERS=hz1,hz2,hz3
+    depends_on:
+      - hazelcast-node1
+      - hazelcast-node2
+      - hazelcast-node3
+    networks:
+      - hazelnet
+
+  logging-service-1:
+    build: ./logging_service
+    ports:
+      - "5001:5001"
+    environment:
+      - HAZELCAST_HOSTS=hazelcast-node1,hazelcast-node2,hazelcast-node3
+    networks:
+      - hazelnet
+    volumes:
+      - shared-logs:/shared
+
+  logging-service-2:
+    build: ./logging_service
+    ports:
+      - "5002:5001"
+    environment:
+      - HAZELCAST_HOSTS=hazelcast-node1,hazelcast-node2,hazelcast-node3
+    networks:
+      - hazelnet
+    volumes:
+      - shared-logs:/shared
+
+  logging-service-3:
+    build: ./logging_service
+    ports:
+      - "5003:5001"
+    environment:
+      - HAZELCAST_HOSTS=hazelcast-node1,hazelcast-node2,hazelcast-node3
+    networks:
+      - hazelnet
+    volumes:
+      - shared-logs:/shared
+
+  facade-service:
     build: ./facade_service
     ports:
       - "5000:5000"
-    depends_on:
-      - logging1
-      - logging2
-      - logging3
-      - messages
+    networks:
+      - hazelnet
 
-  logging1:
-    build: ./logging_service
-    environment:
-      - INSTANCE_NAME=logging1
-      - PORT=5001
-    ports:
-      - "5001:5001"
-
-  logging2:
-    build: ./logging_service
-    environment:
-      - INSTANCE_NAME=logging2
-      - PORT=5002
-    ports:
-      - "5002:5002"
-
-  logging3:
-    build: ./logging_service
-    environment:
-      - INSTANCE_NAME=logging3
-      - PORT=5003
-    ports:
-      - "5003:5003"
-
-  messages:
+  messages-service:
     build: ./messages_service
     ports:
       - "5004:5004"
+    networks:
+      - hazelnet
+
+networks:
+  hazelnet:
+
+volumes:
+
+
+
+
+
+
+
+
+
+
+
+
+
+  shared-logs:

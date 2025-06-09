@@ -1,0 +1,23 @@
+<hazelcast xmlns="http://www.hazelcast.com/schema/config"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.hazelcast.com/schema/config
+                               http://www.hazelcast.com/schema/config/hazelcast-config-5.3.xsd">
+    <cluster-name>dev</cluster-name>
+
+    <queue name="bounded-queue">
+        <max-size>10</max-size>
+    </queue>
+
+    <map name="my-map">
+        <backup-count>2</backup-count>
+    </map>
+
+    <network>
+        <port auto-increment="true">5701</port>
+        <rest-api enabled="true">
+            <endpoint-group name="DATA" enabled="true"/>
+            <endpoint-group name="CLUSTER_READ" enabled="true"/>
+            <endpoint-group name="CLUSTER_WRITE" enabled="true"/>
+        </rest-api>
+    </network>
+</hazelcast>

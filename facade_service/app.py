@@ -6,12 +6,12 @@ import random
 app = Flask(__name__)
 
 LOGGING_SERVICES = [
-    "http://logging1:5001",
-    "http://logging2:5002",
-    "http://logging3:5003"
+    "http://logging-service-1:5001",
+    "http://logging-service-2:5001",
+    "http://logging-service-3:5001"
 ]
 
-MESSAGES_URL = 'http://messages:5004/message'  # messages-service assumed on 5004
+MESSAGES_URL = 'http://messages-service:5004/message'  # messages-service assumed on 5004
 
 @app.route('/message', methods=['POST'])
 def handle_post():
